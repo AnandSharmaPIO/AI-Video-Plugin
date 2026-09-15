@@ -36,6 +36,16 @@ the slash commands — `/produce`, `/doctor`, `/catalog`, `/journey`, `/publish`
 which resolve the plugin path for you. Any bare `platform/...` path mentioned
 elsewhere in this document means `$ENGINE/...`.
 
+## Auto mode
+
+When the session's system reminders say **Auto Mode Active**, skip every
+AskUserQuestion gate below that is marked **non-destructive** — make the
+reasonable default call and proceed, stating the assumption in your report
+instead of stopping to ask. Gates marked **always confirms** are never
+skipped under auto mode: they gate an action that mutates or persists real
+data in the target app, which is hard to reverse and out of scope for
+auto-mode's "proceed without asking" bias.
+
 ## Fast path — one command
 
 ```bash
@@ -53,10 +63,12 @@ toolchain + credentials + app reachability first.
 Use the numbered stages below only to **author or debug** a feature; `produce`
 already sequences them correctly (and re-runs only what's stale).
 
-**Environment — ASK live vs local first.** If the project.yaml defines
-`environments` and the user hasn't said which, ask (AskUserQuestion): **Live**
-(the deployed URL) or **Local** (auto-starts the app's frontend + backend from
-`app-source/` before recording). Pass it through:
+**Environment — ASK live vs local first (non-destructive).** If the
+project.yaml defines `environments` and the user hasn't said which, ask
+(AskUserQuestion): **Live** (the deployed URL) or **Local** (auto-starts the
+app's frontend + backend from `app-source/` before recording). **Under auto
+mode**, skip the ask and use `project.yaml`'s `defaultEnv`, noting the choice
+in your report. Pass it through:
 `/produce <feature> --env local`. The environments and the default live
 in `project.yaml` (`environments:` + `defaultEnv:`) — change `defaultEnv` to
 switch the default any time, or override per run with `--env`. Preflight the
@@ -82,23 +94,32 @@ before exploring from scratch; a starter spec template lives at
 `platform/templates/walkthrough.spec.ts.tmpl`.
 
 **Confirm new or changed shot lists + narration copy with the user
-(AskUserQuestion) before recording.** A re-record of an unchanged, previously
-confirmed feature.yaml (a prior `status.recordedAt` exists) may proceed
-without re-asking — except when `dataSafety.mutates` is true, which always
-confirms.
+(AskUserQuestion) before recording — non-destructive.** A re-record of an
+unchanged, previously confirmed feature.yaml (a prior `status.recordedAt`
+exists) may proceed without re-asking — except when `dataSafety.mutates` is
+true, which always confirms (see below). **Under auto mode**, also skip
+re-asking for a new/changed shot list as long as no shot is
+`dataSafety.mutates`: proceed with the authored list and report it in the
+summary instead of gating on it.
 
 **Click-action confirmation gate (REQUIRED).** The video CLICKS controls to show
 what they do (see "Click, don't just point" in Authoring), so before recording you
-MUST list **every control the recording will click** and confirm the whole set with
-the user (AskUserQuestion). For each, state: the control, what clicking it does,
-**how far the demo goes** (e.g. "opens the edit page — no save", "opens the delete
-confirmation — does NOT delete"), and any real values typed. Nothing is clicked in
-the recording that the user hasn't confirmed. **Destructive / mutating clicks** —
-delete-through, save, submit-create — are called out explicitly and default to NOT
-performed: they run only if the user opts in, and then with `--allow-mutations` +
-a `reset:` plan. A re-record of an unchanged, previously confirmed feature.yaml
-(a prior `status.recordedAt` exists) may skip re-asking — except any mutating
-click, which always re-confirms.
+MUST list **every control the recording will click**, stating for each: the
+control, what clicking it does, **how far the demo goes** (e.g. "opens the edit
+page — no save", "opens the delete confirmation — does NOT delete"), and any real
+values typed. This list is always produced. What differs is whether it's also
+posed as an AskUserQuestion:
+- **Non-mutating clicks (view/edit/add/export/search/filter/pagination, and a
+  destructive click that stops at `stopBefore` without crossing it)** — confirm
+  with the user (AskUserQuestion) normally; **under auto mode, skip the ask**
+  and proceed with the listed clicks, printing the list in your report instead.
+- **Destructive / mutating clicks that actually cross the boundary** —
+  delete-through, save, submit-create — **always confirm with the user
+  (AskUserQuestion), auto mode or not.** They default to NOT performed and run
+  only on explicit opt-in, then with `--allow-mutations` + a `reset:` plan. A
+  re-record of an unchanged, previously confirmed feature.yaml may skip
+  re-asking for everything EXCEPT any mutating click, which always re-confirms
+  regardless of mode.
 
 ### 2. Generate the artifacts
 ```bash

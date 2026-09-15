@@ -53,6 +53,14 @@ Into `walkthroughs/<p>/knowledge/`:
   can take 60s", "repo list is an antd combobox"), updated whenever a
   recording session proves or disproves one.
 
+**Auto mode.** When the session's system reminders say **Auto Mode Active**,
+skip the AskUserQuestion confirmations below (they're proposing non-destructive
+drafts, not performing any action against the target app) and proceed with the
+reasonable default, noting the assumption in your report. The bootstrap facts
+in "Gather the app facts" below are the exception — those are missing inputs
+(project id, baseUrl, credentials env names) that can't be defaulted, so still
+ask for whatever isn't inferable from `app-source/`.
+
 Into the catalog (as **drafts for user confirmation**, via AskUserQuestion):
 - `modules/<m>/module.yaml` for each discovered module (name, user-facing
   description, navigation, ordered feature list).
@@ -80,9 +88,12 @@ or unattended run still produces reviewable output.
 
 A missing project folder is not an error — scaffold it first, then discover:
 
-1. Gather the app facts, from the user (AskUserQuestion) and/or `app-source/`:
-   project id (kebab-case), name, baseUrl, login path + whether auth exists,
-   and any env names for credentials.
+1. Gather the app facts, from `app-source/` first (project id, name, baseUrl,
+   login path, auth presence, credential env names are usually derivable from
+   the repo — package.json name, router/config files, `.env.example`); ask the
+   user (AskUserQuestion) only for what's still missing. This step still asks
+   under auto mode too, since a missing baseUrl/credentials name can't be
+   guessed.
 2. Create `walkthroughs/<id>/project.yaml` from
    `$ENGINE/templates/project.yaml.tmpl` (delete the `auth:` block for public
    apps; omit `channel:` unless Chrome is installed).
@@ -184,6 +195,10 @@ nothing. While mapping, apply what a capable pass would otherwise miss:
   zero. Reserve exact `role:` for genuinely text-only controls.
 - Finish by proposing the module/feature drafts and confirming with the user
   which features to produce first — then hand off to `/walkthrough-produce`.
+  **Under auto mode**, skip that confirmation: report the drafted modules/
+  features and proceed to hand off the first (or all newly drafted) feature(s)
+  to `/walkthrough-produce`, which carries its own gates for anything that
+  actually records or mutates.
 
 ## Rules
 

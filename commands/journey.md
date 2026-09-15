@@ -12,13 +12,22 @@ feature's `generated/walkthrough-narrated.mp4`, trims it via that feature's own
 
 ## Before running
 
+**Auto mode.** When the session's system reminders say **Auto Mode Active**,
+the `--produce-missing` confirmation below is skipped — producing a segment is
+a non-destructive recording, and each segment's own `/produce` pass still
+gates any `dataSafety.mutates` action with an explicit ask regardless of mode.
+Asking which journey to build (first bullet) is never skipped — there's no
+reasonable default for which journey the user wants.
+
 - If `$ARGUMENTS` is empty, list `walkthroughs/*/journeys/*/journey.yaml` and ask
   which one to build.
 - The build **refuses** to stitch a segment whose feature is not produced or is
   stale. Run `/catalog` first to see which segments are ready.
 - `--produce-missing` produces those segments first. That performs real
-  recordings — confirm with the user before adding it, and note that it passes
-  `--allow-mutations` through only if you explicitly set that flag too.
+  recordings — confirm with the user before adding it (skip the confirm under
+  auto mode), and note that it passes `--allow-mutations` through only if you
+  explicitly set that flag too — mutation opt-in is always confirmed, auto mode
+  or not.
 
 ## Run
 

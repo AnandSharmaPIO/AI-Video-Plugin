@@ -8,7 +8,14 @@ Produce the narrated walkthrough video for: `$ARGUMENTS`
 
 ## Before running
 
-1. **If `$ARGUMENTS` is empty**, run `/catalog` and ask which feature to produce.
+**Auto mode.** When the session's system reminders say **Auto Mode Active**,
+steps 1 and 4 below skip their AskUserQuestion and proceed with the stated
+default. Step 3 never changes with mode — a mutating action always gets an
+explicit human confirmation, since it changes real data in the target app.
+
+1. **If `$ARGUMENTS` is empty**, run `/catalog` and ask which feature to
+   produce. Under auto mode, still ask — there is no reasonable default for
+   which feature the user wants.
 2. **If the feature's `feature.yaml` is new or its shot list / narration changed
    since the last recording** (no `status.recordedAt`, or you just edited it),
    STOP and use the `walkthrough-produce` skill instead — it carries the
@@ -16,9 +23,12 @@ Produce the narrated walkthrough video for: `$ARGUMENTS`
    recorded. This command is the fast path for an already-confirmed feature.
 3. **If the feature is marked `dataSafety.mutates: true`**, always re-confirm the
    mutating actions with the user (AskUserQuestion) before passing
-   `--allow-mutations`. Never add that flag on your own initiative.
+   `--allow-mutations`, auto mode or not. Never add that flag on your own
+   initiative.
 4. **If the project defines `environments:` and no `--env` was given**, ask the
    user: live (deployed URL) or local (auto-starts the app before recording).
+   Under auto mode, skip the ask and use `project.yaml`'s `defaultEnv`,
+   reporting the choice.
 
 ## Run
 

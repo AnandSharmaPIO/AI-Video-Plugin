@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "walkthrough/module.schema.json",
+  "title": "Walkthrough module descriptor (module.yaml)",
+  "type": "object",
+  "required": ["id", "project", "name"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "project": { "type": "string", "description": "Owning project id." },
+    "name": { "type": "string" },
+    "description": { "type": "string", "description": "What the module does for the user — business language only." },
+    "navigation": { "type": "string", "description": "How a user reaches this module, e.g. 'sidebar: Code Review'." },
+    "features": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Feature ids in presentation order (drives module-video composition)."
+    }
+  }
+}

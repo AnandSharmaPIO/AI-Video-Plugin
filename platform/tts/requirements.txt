@@ -1,0 +1,14 @@
+# Default (local, free, no API key) TTS backend. Pinned to a known-good version
+# (this stack transitively pulls torch/torchaudio/perth — an unpinned upgrade can
+# break a fresh venv while existing ones keep working). Bump deliberately.
+chatterbox-tts==0.1.7
+
+# Full-featured ffmpeg (libx264 + AAC) for the MP4 mux — Playwright's bundled
+# ffmpeg is VP8-only and cannot produce narrated MP4s.
+imageio-ffmpeg==0.6.0
+
+# Optional cloud backends — uncomment the one you want, then set its API key:
+#   openai       -> OPENAI_API_KEY
+#   elevenlabs   -> ELEVENLABS_API_KEY
+# openai
+# elevenlabs

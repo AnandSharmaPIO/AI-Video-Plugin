@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "walkthrough/video.schema.json",
+  "title": "Composed video manifest (*.video.yaml)",
+  "description": "Defines a module- or project-level video composed from existing feature segments plus generated intro/transition/outro cards. Composition never re-records features.",
+  "type": "object",
+  "required": ["id", "title", "segments"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "segments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "minProperties": 1,
+        "maxProperties": 1,
+        "properties": {
+          "intro": { "$ref": "#/$defs/card" },
+          "transition": { "$ref": "#/$defs/card" },
+          "outro": { "$ref": "#/$defs/card" },
+          "feature": { "type": "string", "description": "Feature segment as '<module>/<feature>' — reuses its narrated MP4." }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "card": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "template": { "type": "string", "description": "Card template id (e.g. title-card, section-card, cta-card)." },
+        "text": { "type": "string" },
+        "narration": { "type": "string" },
+        "durationSeconds": { "type": "number" }
+      }
+    }
+  }
+}

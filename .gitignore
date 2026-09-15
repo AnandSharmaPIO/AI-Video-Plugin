@@ -1,0 +1,19 @@
+# Plugin runtime — rebuilt per machine by /walkthrough-setup, never committed.
+node_modules/
+
+# TTS virtualenv. Default location is platform/tts/venv; point
+# WALKTHROUGH_TTS_VENV at a user-level cache so a plugin update cannot
+# destroy a multi-GB, 15-20 minute rebuild.
+platform/tts/venv/
+__pycache__/
+*.pyc
+
+# Media is never committed anywhere in this system — it is regenerable output
+# and it lives in the USER's project, not here. Belt and braces.
+*.webm
+*.mp4
+*.wav
+generated/
+
+# Never commit real credentials.
+.env

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "walkthrough/feature.schema.json",
+  "title": "Walkthrough feature descriptor (feature.yaml)",
+  "description": "Source of truth for one feature walkthrough. The spec and narration are generated/derived from this; videos never explain implementation — every field is user-facing.",
+  "type": "object",
+  "required": ["id", "module", "name", "shots"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "module": { "type": "string", "description": "Owning module id." },
+    "name": { "type": "string" },
+    "constants": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "Non-secret demo constants emitted as consts in the generated spec (e.g. REPO_NAME). Secrets NEVER go here — use auth.credentialsEnv."
+    },
+    "businessValue": { "type": "string", "description": "Why the feature exists, for the viewer." },
+    "userJourney": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Ordered journey steps in user terms (navigation path)."
+    },
+    "dataSafety": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mutates": { "type": "boolean", "description": "true if recording changes real data — record-feature refuses without --allow-mutations." },
+        "stopBefore": { "type": "string", "description": "Action the spec deliberately never performs, e.g. 'click:Review Code'." },
+        "reset": { "type": "string", "description": "How to restore clean demo state (app's own tooling)." }
+      }
+    },
+    "shots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["n", "title", "narration"],
+        "additionalProperties": false,
+        "properties": {
+          "n": { "type": "integer", "minimum": 1 },
+          "title": { "type": "string" },
+          "narration": { "type": "string", "description": "Spoken line — product-demo voice, business language only." },
+          "guard": { "type": "string", "description": "Human hint: what the shot depends on (documentation only)." },
+          "guardExpr": { "type": "string", "description": "TypeScript expression; when falsy the shot is skipped with a logged message (mark happens inside the guard)." },
+          "action": { "type": "string", "description": "Human summary of the interaction (documentation only)." },
+          "steps": {
+            "type": "array",
+            "items": { "type": "object" },
+            "description": "Structured interaction steps. Each step is one op: {goto|click|glide|scroll|type|assertVisible|waitForURL|beat|installCursor}. `scroll: <locator>` smoothly scrolls that element to center (reveal below-the-fold content). Locators use 'kind:value[:name]' — role:button:Sign In, placeholder:Email, label:Password, text:Foo."
+          },
+          "custom": { "type": "string", "description": "Verbatim TypeScript shot body for interactions the step language can't express. Shares scope with earlier shots." },
+          "holdMs": { "type": "integer", "minimum": 0, "description": "Closing beat in ms after the shot's steps so the narration can finish (default 2200). steps shots only — custom shots pace themselves." },
+          "assert": { "type": "string", "description": "What proves the shot's end state rendered (documentation; enforce via steps/custom)." }
+        }
+      }
+    },
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "recordedAt": { "type": "string", "format": "date" },
+        "specHash": { "type": "string", "description": "Hash of walkthrough.spec.ts at last recording — staleness detection." },
+        "generatedSpecHash": { "type": "string", "description": "Hash of walkthrough.spec.ts as last generated (stamped by generate-feature). record-feature refuses to record when the on-disk spec differs — i.e. it was hand-edited or the yaml changed without regeneration." },
+        "contentHash": { "type": "string", "description": "Hash of feature.yaml (excluding status) at last generation. Committed so catalog can detect yaml-vs-spec desync from a fresh clone, where mtimes are meaningless." },
+        "appVersion": { "type": "string" }
+      }
+    }
+  }
+}

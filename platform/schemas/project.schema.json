@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "walkthrough/project.schema.json",
+  "title": "Walkthrough project descriptor (project.yaml)",
+  "type": "object",
+  "required": ["id", "name", "baseUrl"],
+  "additionalProperties": false,
+  "$defs": {
+    "startCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command"],
+      "properties": {
+        "command": { "type": "string", "description": "Command that starts a server (e.g. 'npm start', 'dotnet run --launch-profile http')." },
+        "cwd": { "type": "string", "description": "Working dir for the command, relative to the project folder (e.g. ../../app-source/Frontend)." },
+        "readyUrl": { "type": "string", "description": "URL polled until it responds, so recording waits for this server to be up (defaults to the environment baseUrl)." }
+      }
+    }
+  },
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "Stable kebab-case id; never renamed." },
+    "name": { "type": "string" },
+    "baseUrl": { "type": "string", "format": "uri" },
+    "businessPurpose": { "type": "string", "description": "What the product is for, in end-user language. Feeds project-level video narration." },
+    "auth": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "loginPath": { "type": "string" },
+        "credentialsEnv": { "type": "array", "items": { "type": "string" }, "description": "Env var NAMES only — values live in .env, never in yaml." },
+        "postLoginAssert": { "type": "string", "description": "locator hint proving login landed, e.g. 'heading:Metrics'" }
+      }
+    },
+    "video": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "viewport": {
+          "type": "object",
+          "required": ["width", "height"],
+          "properties": { "width": { "type": "integer" }, "height": { "type": "integer" } }
+        },
+        "headless": { "type": "boolean", "default": true },
+        "channel": { "type": "string", "description": "Browser channel (e.g. 'chrome') when bundled Chromium can't run." },
+        "ignoreHTTPSErrors": { "type": "boolean", "default": true, "description": "Accept self-signed/invalid TLS certs (common for a local https backend, e.g. https://localhost:5001). Valid certs pass regardless; set false to enforce cert validation." },
+        "voice": { "type": "string", "description": "TTS voice/engine preset for this project's narration." }
+      }
+    },
+    "start": {
+      "description": "Command(s) that start the app locally; omit if already running/deployed. A single command, or a list (e.g. backend + frontend) started together.",
+      "anyOf": [
+        { "$ref": "#/$defs/startCommand" },
+        { "type": "array", "items": { "$ref": "#/$defs/startCommand" } }
+      ]
+    },
+    "defaultEnv": {
+      "type": "string",
+      "description": "Which entry of `environments` to use when none is passed (WT_ENV / --env). Change this to switch the default recording environment."
+    },
+    "environments": {
+      "type": "object",
+      "description": "Named recording targets, e.g. live (deployed) and local (auto-started). Selected per run with --env <name> (or WT_ENV), else `defaultEnv`. Each overrides baseUrl and start.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "baseUrl": { "type": "string", "format": "uri", "description": "Base URL for this environment (e.g. https://app… or http://localhost:5173)." },
+          "start": {
+            "description": "Command(s) to auto-start for this environment before recording. A single command or a list (backend + frontend) started together.",
+            "anyOf": [
+              { "$ref": "#/$defs/startCommand" },
+              { "type": "array", "items": { "$ref": "#/$defs/startCommand" } }
+            ]
+          },
+          "credentialsEnv": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Env var NAMES (values live in .env) for THIS environment's login, e.g. [WALKTHROUGH_LOCAL_EMAIL, WALKTHROUGH_LOCAL_PASSWORD] for a locally-seeded DB account. Overrides the project-level auth.credentialsEnv when this environment is selected. Omit to reuse the project-level credentials (the common case for a live/deployed target)."
+          }
+        }
+      }
+    },
+    "source": {
+      "description": "Where the app's source lives (relative to repo root), read by /walkthrough-discover. Either a list of paths, e.g. [app-source/Frontend, app-source/Backend], or a role->path map, e.g. { frontend: app-source/Frontend, backend: app-source/Backend }.",
+      "anyOf": [
+        { "type": "array", "items": { "type": "string" } },
+        { "type": "object", "additionalProperties": { "type": "string" } }
+      ]
+    },
+    "publish": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Where finished narrated MP4s are copied by publish.mjs. Media is gitignored — this is its durable home. The WT_PUBLISH_DIR env var overrides dest.",
+      "properties": {
+        "dest": { "type": "string", "description": "Directory (local path or mounted share) that receives <project>/<module>/<feature>.mp4 plus a manifest.json." }
+      }
+    }
+  }
+}

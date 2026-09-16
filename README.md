@@ -1,5 +1,13 @@
 # Video — Claude Code plugin
 
+This repo is a **plugin marketplace** — `.claude-plugin/marketplace.json` at
+the repo root lists its plugins, each living in its own folder under
+`plugins/`. Today it hosts one: `plugins/video/`. A future plugin (e.g. a
+standalone research plugin) would be added the same way: a new
+`plugins/<name>/` folder plus one more entry in `marketplace.json`.
+
+The rest of this README documents the **`video`** plugin.
+
 Generate narrated, **UI-focused** walkthrough videos (product demos, training,
 onboarding) of any web app, driven by Playwright with a visible gliding cursor
 and local TTS narration.
@@ -17,8 +25,8 @@ Source code is only a lens for understanding features and user journeys —
 
 | | Lives in | Contains |
 |---|---|---|
-| **Engine** | this plugin | `platform/` — cursor runtime, Playwright config, codegen, schemas, TTS toolkit. Generic; never edited per app. |
-| **Content** | your project | `walkthroughs/<app>/` — `project.yaml`, `knowledge/`, `modules/<m>/features/<f>/feature.yaml`, and gitignored `generated/` media. |
+| **Engine** | `plugins/video/platform/` | cursor runtime, Playwright config, codegen, schemas, TTS toolkit. Generic; never edited per app. |
+| **Content** | your project | `<app>/` — a folder directly at the repo root (any folder containing a `project.yaml` is a project): `project.yaml`, `project-overview/`, `modules/<m>/features/<f>/feature.yaml`, and gitignored `generated/` media (final deliverable: `final-video.mp4`). |
 
 One plugin install serves every app and every project.
 
@@ -61,7 +69,7 @@ model. You do not need to install ffmpeg or Chrome yourself.
 
 | Skill | Use when |
 |---|---|
-| `walkthrough-discover` | Mapping a new app — builds `knowledge/` (app map, journeys, proven selectors) and drafts `feature.yaml` files |
+| `walkthrough-discover` | Mapping a new app — builds `project-overview/` (app map, journeys, proven selectors) and drafts `feature.yaml` files |
 | `walkthrough-produce` | Authoring or producing a feature video; carries the click-action confirmation gate and the authoring patterns |
 
 Use the skills for authoring; the commands are the fast path once a feature is
@@ -118,16 +126,21 @@ Every video is delivered at **1920×1080, 30 fps, H.264 + AAC**.
 ## Repository layout
 
 ```
-.claude-plugin/plugin.json   manifest
-commands/                    8 slash commands
-skills/                      walkthrough-discover, walkthrough-produce
-agents/                      research (deep-research subagent used by /research)
-platform/                    the engine (copied verbatim from the source repo)
-  engine/                    cursor.ts, walkthrough.ts, env.mjs, playwright.config.ts
-  scripts/                   produce, generate, record, journey, catalog, doctor, publish
-  schemas/                   feature / project / module / journey JSON Schemas
-  templates/                 project.yaml.tmpl, .env.example, spec + narration templates
-  tts/                       generate.py, build_narrated.py, verify_media.py, build_journey.py
-templates/project/           package.json, tsconfig.json, CLAUDE.md dropped into a project
-docs/                        setup guides and pipeline notes
+.claude-plugin/marketplace.json   marketplace manifest — lists every plugin below
+docs/                              setup guides and pipeline notes (repo-level, not plugin-bundled)
+plugins/
+  video/                           this plugin
+    .claude-plugin/plugin.json     plugin manifest
+    commands/                      8 slash commands
+    skills/                        walkthrough-discover, walkthrough-produce
+    agents/                        research (deep-research subagent used by /research)
+    platform/                      the engine
+      engine/                      cursor.ts, walkthrough.ts, env.mjs, playwright.config.ts
+      scripts/                     produce, generate, record, journey, catalog, doctor, publish
+      schemas/                     feature / project / module / journey JSON Schemas
+      templates/                   project.yaml.tmpl, .env.example, spec + narration templates
+      tts/                         generate.py, build_narrated.py, verify_media.py, build_journey.py
+    templates/project/             package.json, tsconfig.json, CLAUDE.md dropped into a project
+    .mcp.json                      bundled MCP servers (playwright, used by /research)
+    package.json, tsconfig.json    engine's own Node dependencies (installed via /setup)
 ```

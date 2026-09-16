@@ -94,6 +94,6 @@ exist. metrics-viewer: `live` (Azure URL) + `local` (Vite :5173 + dotnet :5000).
 
 ## Reference: the metrics-viewer/add-user feature is the worked example
 
-`walkthroughs/metrics-viewer/modules/users/features/add-user/feature.yaml` is the
+`metrics-viewer/modules/users/features/add-user/feature.yaml` is the
 reference for all the patterns above (login with brisk typing, one-control-per-shot,
 Role dropdown open-hold-select, preset Client field glide, stopBefore Save).

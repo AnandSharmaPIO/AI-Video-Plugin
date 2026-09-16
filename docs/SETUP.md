@@ -3,7 +3,9 @@
 > **Archived reference.** This guide describes the framework as a **standalone
 > repo**, before it became a plugin: it assumes `platform/` sits inside your
 > project and that `npm run …` scripts exist there. Neither is true in plugin
-> form — a walkthrough project is pure content with no `package.json`.
+> form — a walkthrough project is pure content with no `package.json`. The
+> engine itself now lives at `plugins/video/` in this repo (this guide's
+> bare `platform/...`, `npm install`, etc. mean "from inside `plugins/video/`").
 > For current instructions see the plugin README, `/setup` and
 > `/init`. Kept because its conceptual material (the rules, the
 > troubleshooting, the lexicon) is still accurate.
@@ -15,10 +17,12 @@ and saves an MP4. You do not edit videos by hand.
 **Two things to keep straight:**
 
 - `platform/` is the tool itself. **You never change it.**
-- `walkthroughs/<app>/` is your content for one app. **This is what you create.**
+- `<app>/` — a folder directly at the repo root — is your content for one app.
+  **This is what you create.**
 
-One copy of this repo can hold many apps, each in its own folder under
-`walkthroughs/`.
+One copy of this repo can hold many apps, each in its own folder at the repo
+root (any folder that directly contains a `project.yaml` is a project — there
+is no fixed wrapper folder).
 
 The guide has three parts. Do Part 1 once per computer. Do Part 2 once per app.
 Do Part 3 every time you want a video.
@@ -82,13 +86,13 @@ There are two cases. Read both titles and follow the one that matches you.
 
 ### Case A — The app is already set up in this repo
 
-If a folder `walkthroughs/<app>/` already exists, someone set the app up before.
+If a folder `<app>/` already exists at the repo root, someone set the app up before.
 You only need to add the login. Passwords live in a `.env` file that is **never**
 shared or committed.
 
 1. Copy the example file:
    ```bash
-   cp walkthroughs/<app>/.env.example walkthroughs/<app>/.env
+   cp <app>/.env.example <app>/.env
    ```
 2. Open the new `.env` file and type in the real email and password. If the app
    has more than one environment (e.g. a live site and a local copy that need
@@ -108,7 +112,7 @@ shared or committed.
    ```
    /walkthrough-discover
    ```
-   It builds the `walkthroughs/<your-app>/` folder for you: the settings, a map of
+   It builds the `<your-app>/` folder for you: the settings, a map of
    the app, and draft plans for videos. It will ask you for the app's address and
    login details.
 4. **Add the real login.** Open the `.env` file the tool created and type in the
@@ -116,7 +120,7 @@ shared or committed.
 
 > Want to do it by hand instead? Copy
 > `platform/templates/project.yaml.tmpl` to
-> `walkthroughs/<your-app>/project.yaml` and fill in the address and login path.
+> `<your-app>/project.yaml` and fill in the address and login path.
 
 ---
 
@@ -125,7 +129,7 @@ shared or committed.
 One command does the whole job. It stops and tells you if anything goes wrong:
 
 ```bash
-npm run produce -- walkthroughs/<app>/modules/<module>/features/<feature>
+npm run produce -- <app>/modules/<module>/features/<feature>
 ```
 
 This writes the script, records the screen, makes the voiceover, joins them
@@ -133,7 +137,7 @@ together, and checks the result. Every video comes out **Full HD (1920×1080) at
 30 fps** with a smooth on-screen cursor. When it finishes, your video is here:
 
 ```
-walkthroughs/<app>/modules/<module>/features/<feature>/generated/walkthrough-narrated.mp4
+<app>/modules/<module>/features/<feature>/generated/final-video.mp4
 ```
 
 **Before it records, the tool checks with you.** If a video would do anything that
@@ -149,7 +153,7 @@ Helpful extras:
 - **Want to keep the finished video somewhere safe?** Videos are not saved in git.
   Copy one out with:
   ```bash
-  npm run publish -- walkthroughs/<app>/modules/<module>/features/<feature> --dest <your-folder>
+  npm run publish -- <app>/modules/<module>/features/<feature> --dest <your-folder>
   ```
 
 ### Choose where to record: live or local
@@ -175,14 +179,14 @@ Once you have several finished feature videos, you can stitch them into **one**
 end-to-end walkthrough (sign-in → … → sign-out) — without re-recording anything:
 
 ```bash
-npm run journey -- walkthroughs/<app>/journeys/<id>
+npm run journey -- <app>/journeys/<id>
 ```
 
 It reuses the finished feature videos, trims the repeated sign-in from later
 parts, and joins them into
-`walkthroughs/<app>/journeys/<id>/generated/journey.mp4`. Ask
+`<app>/journeys/<id>/generated/journey.mp4`. Ask
 `/walkthrough-discover` to draft a journey, or add
-`walkthroughs/<app>/journeys/<id>/journey.yaml` yourself (an ordered list of the
+`<app>/journeys/<id>/journey.yaml` yourself (an ordered list of the
 features to include).
 
 ---
@@ -201,7 +205,7 @@ features to include).
 | `npm run publish -- <feature> --dest <dir>` | Copies a finished video somewhere safe |
 
 `<feature>` means the folder path, for example:
-`walkthroughs/acme/modules/billing/features/create-invoice`.
+`acme/modules/billing/features/create-invoice`.
 
 Inside Claude Code you also have two helpers:
 
@@ -282,5 +286,5 @@ voice toolkit (venv) never works on another computer.
 **A name or acronym is said wrong in the voiceover.**
 Add how it should sound to a lexicon file:
 `platform/tts/lexicon.default.json` (applies to all apps), or
-`walkthroughs/<app>/knowledge/lexicon.json` (that app only).
+`<app>/project-overview/lexicon.json` (that app only).
 Format: `{ "written word": "how it should sound" }`.

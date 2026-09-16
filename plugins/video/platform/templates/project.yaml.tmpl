@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../platform/schemas/project.schema.json
+id: {{PROJECT_ID}}                # kebab-case folder name at the content root
+name: {{PROJECT_NAME}}
+baseUrl: {{BASE_URL}}             # e.g. https://app.example.com or http://localhost:3000
+businessPurpose: >
+  {{ONE_PARAGRAPH_WHAT_THE_APP_DOES_FOR_USERS}}
+
+auth:                             # delete this block entirely for public apps
+  loginPath: /login
+  credentialsEnv: [WALKTHROUGH_EMAIL, WALKTHROUGH_PASSWORD]   # any env names; values in gitignored .env
+  postLoginAssert: "heading:{{TEXT_VISIBLE_AFTER_LOGIN}}"
+  # selectors: { user: 'css…', pass: 'css…', submit: 'css…' }  # only if login heuristics miss
+
+video:
+  viewport: { width: 1920, height: 1080 }
+  headless: true
+  # channel: chrome               # only if Google Chrome is installed; omit for bundled Chromium
+  # ignoreHTTPSErrors: true       # default true; accepts a local backend's self-signed cert. Set false to enforce TLS.
+  voice: chatterbox-default
+
+# source: [app-source/frontend, app-source/backend]   # paths discovery reads
+# discovery:
+#   submenuSelector: '…'          # only if nav popups aren't nested [role="menu"]
+
+# --- Single-URL projects: just set the two lines below (no `environments` needed) ---
+# start: { command: "npm run dev", cwd: ../…, readyUrl: … }   # only if the app must boot locally
+
+# --- Multi-environment projects: pick a target per run with `--env <name>` ---
+# Each environment overrides baseUrl + start, and may name its OWN login creds
+# (e.g. a locally-seeded DB account differs from the deployed one). Change
+# `defaultEnv` to switch the default any time. Delete this block for single-URL apps.
+# defaultEnv: live
+# environments:
+#   live:
+#     baseUrl: https://app.example.com          # deployed — already running, no start
+#   local:
+#     baseUrl: http://localhost:3000            # whatever your dev server serves
+#     credentialsEnv: [WALKTHROUGH_LOCAL_EMAIL, WALKTHROUGH_LOCAL_PASSWORD]  # names only; values in .env
+#     start:                                    # a LIST auto-starts several servers together
+#       - { command: "<backend start>",  cwd: ../../app-source/<backend>,  readyUrl: "http://localhost:<api-port>" }
+#       - { command: "<frontend start>", cwd: ../../app-source/<frontend>, readyUrl: "http://localhost:3000" }

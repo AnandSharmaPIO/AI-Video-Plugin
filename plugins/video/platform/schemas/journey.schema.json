@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "walkthrough/journey.schema.json",
+  "title": "Walkthrough journey (journey.yaml)",
+  "description": "An ordered compilation of already-produced feature videos stitched into ONE end-to-end walkthrough. Reuses each feature's generated/final-video.mp4 — nothing is re-recorded. Lives at <p>/journeys/<id>/journey.yaml; the build writes generated/journey.mp4 (gitignored).",
+  "type": "object",
+  "required": ["id", "name", "segments"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "kebab-case; matches the journeys/<id>/ folder name." },
+    "name": { "type": "string" },
+    "businessValue": { "type": "string", "description": "What the whole tour demonstrates, for the viewer." },
+    "segments": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Feature videos to stitch, in play order. Any module — a journey is the whole-app tour.",
+      "items": {
+        "type": "object",
+        "required": ["feature"],
+        "additionalProperties": false,
+        "properties": {
+          "feature": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*/[a-z0-9]+(-[a-z0-9]+)*$", "description": "<module>/<feature> under this project, e.g. users/view-users-list. Its final-video.mp4 is the segment source." },
+          "fromShot": { "type": "integer", "minimum": 1, "description": "Trim the segment to START at this shot (drops earlier shots — e.g. skip a repeated sign-in on a later segment). Default: whole feature. First segment usually keeps its login; later ones set fromShot past it." },
+          "toShot": { "type": "integer", "minimum": 1, "description": "Trim the segment to END after this shot. Default: to the feature's end." },
+          "note": { "type": "string", "description": "Author note (documentation only)." }
+        }
+      }
+    },
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "builtAt": { "type": "string", "format": "date" },
+        "contentHash": { "type": "string", "description": "Hash of journey.yaml (excluding status) at last build." }
+      }
+    }
+  }
+}

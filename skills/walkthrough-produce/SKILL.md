@@ -215,7 +215,7 @@ render a hidden measure row (so `.ant-table-row:first-child` misses — use
 ```
 (TTS from step 3 already produced the clips.) Venv python:
 `$ENGINE/tts/venv/Scripts/python.exe` (Windows) or `.../bin/python` (POSIX);
-missing venv → run `/walkthrough-setup`.
+missing venv → run `/setup`.
 
 **Sync is automatic — do NOT hand-tune it.** The recorder tagged each shot with
 a scan marker + anchor screenshot (`markVisual`); `anchored` mode finds each

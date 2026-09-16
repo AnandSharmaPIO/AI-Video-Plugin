@@ -4,8 +4,8 @@
 > repo**, before it became a plugin: it assumes `platform/` sits inside your
 > project and that `npm run …` scripts exist there. Neither is true in plugin
 > form — a walkthrough project is pure content with no `package.json`.
-> For current instructions see the plugin README, `/walkthrough-setup` and
-> `/walkthrough-init`. Kept because its conceptual material (the rules, the
+> For current instructions see the plugin README, `/setup` and
+> `/init`. Kept because its conceptual material (the rules, the
 > troubleshooting, the lexicon) is still accurate.
 
 Video Creator makes narrated walkthrough videos of **any** web app for you.

@@ -1,4 +1,4 @@
-# Plugin runtime — rebuilt per machine by /walkthrough-setup, never committed.
+# Plugin runtime — rebuilt per machine by /setup, never committed.
 node_modules/
 
 # TTS virtualenv. Default location is platform/tts/venv; point

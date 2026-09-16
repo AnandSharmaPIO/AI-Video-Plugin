@@ -1,13 +1,13 @@
 {
-  "name": "walkthrough-video-creator-marketplace",
-  "description": "Marketplace for the walkthrough-video-creator plugin — narrated UI walkthrough videos via Playwright and local TTS.",
+  "name": "video-marketplace",
+  "description": "Marketplace for the video plugin — narrated UI walkthrough videos via Playwright and local TTS.",
   "owner": {
     "name": "Programmers.ai",
     "email": "Anand.Sharma@programmers.ai"
   },
   "plugins": [
     {
-      "name": "walkthrough-video-creator",
+      "name": "video",
       "source": "./",
       "description": "Generate narrated, UI-focused walkthrough videos (product demos, training, onboarding) of any web app via Playwright + local TTS. Voice-first pipeline with frame-anchored audio sync, schema-validated feature specs, and mechanical media verification.",
       "version": "0.1.0",

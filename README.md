@@ -1,4 +1,4 @@
-# Walkthrough Video Creator — Claude Code plugin
+# Video — Claude Code plugin
 
 Generate narrated, **UI-focused** walkthrough videos (product demos, training,
 onboarding) of any web app, driven by Playwright with a visible gliding cursor
@@ -28,14 +28,14 @@ One plugin install serves every app and every project.
 
 ```
 /plugin marketplace add <this-repo-url>
-/plugin install walkthrough-video-creator@<marketplace-name>
+/plugin install video@<marketplace-name>
 ```
 
 Then, in order:
 
 ```
-/walkthrough-setup      # once per machine — deps, Chromium, TTS venv
-/walkthrough-init       # once per project — links the engine, scaffolds config
+/setup      # once per machine — deps, Chromium, TTS venv
+/init       # once per project — links the engine, scaffolds config
 ```
 
 Requirements: **Node 18+**, **Python 3.10–3.12** (not 3.13/3.14 — no wheels for
@@ -48,13 +48,14 @@ model. You do not need to install ffmpeg or Chrome yourself.
 
 | Command | Does |
 |---|---|
-| `/walkthrough-setup` | Per-machine toolchain setup |
-| `/walkthrough-init` | Per-project bridge + scaffold |
+| `/setup` | Per-machine toolchain setup |
+| `/init` | Per-project bridge + scaffold |
 | `/doctor [<feature>] [--env <name>]` | Preflight machine, credentials, app reachability |
 | `/catalog [--stale]` | Inventory every feature; show what is stale |
 | `/produce <feature> [--env live\|local]` | Full pipeline for one feature |
 | `/journey <journey-path>` | Stitch produced feature videos into one tour |
 | `/publish <feature> --dest <dir>` | Copy finished MP4s to shared storage |
+| `/research <target>` | Research an entire project/website/docs, or one module/file/feature/section — writes `research.md` |
 
 ## Skills
 
@@ -65,6 +66,12 @@ model. You do not need to install ffmpeg or Chrome yourself.
 
 Use the skills for authoring; the commands are the fast path once a feature is
 confirmed.
+
+## Agents
+
+| Agent | Used by |
+|---|---|
+| `research` | `/research` — investigates a codebase, live website, and/or documentation set (whole or one named part) via file/grep search and the Playwright MCP server, then writes a sourced `research.md` report. Read-only: never edits, fixes, or mutates anything it researches. |
 
 ---
 
@@ -112,8 +119,9 @@ Every video is delivered at **1920×1080, 30 fps, H.264 + AAC**.
 
 ```
 .claude-plugin/plugin.json   manifest
-commands/                    7 slash commands
+commands/                    8 slash commands
 skills/                      walkthrough-discover, walkthrough-produce
+agents/                      research (deep-research subagent used by /research)
 platform/                    the engine (copied verbatim from the source repo)
   engine/                    cursor.ts, walkthrough.ts, env.mjs, playwright.config.ts
   scripts/                   produce, generate, record, journey, catalog, doctor, publish

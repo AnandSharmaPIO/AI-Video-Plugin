@@ -4,7 +4,7 @@ allowed-tools: Bash, Read, Write, Glob
 ---
 
 Prepare the current project to produce walkthrough videos with this plugin.
-Run once per project, after `/walkthrough-setup` has passed on this machine.
+Run once per project, after `/setup` has passed on this machine.
 
 ## How the two halves fit together
 

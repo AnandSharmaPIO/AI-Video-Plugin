@@ -52,8 +52,8 @@ Model weights cache in the user profile, so later venv rebuilds are quick.
 >
 > ```
 > # Windows: [Environment]::SetEnvironmentVariable('WALKTHROUGH_TTS_VENV',
-> #   "$env:LOCALAPPDATA\walkthrough-video-creator\tts-venv", 'User')
-> # POSIX:   export WALKTHROUGH_TTS_VENV="$HOME/.cache/walkthrough-video-creator/tts-venv"
+> #   "$env:LOCALAPPDATA\video\tts-venv", 'User')
+> # POSIX:   export WALKTHROUGH_TTS_VENV="$HOME/.cache/video/tts-venv"
 > ```
 >
 > Left unset, the venv builds at `platform/tts/venv` inside this plugin, which
@@ -66,7 +66,7 @@ node "$CLAUDE_PLUGIN_ROOT/platform/scripts/doctor.mjs"
 ```
 
 Every line must show a green check. Fix anything that does not, then re-run.
-Do not proceed to `/walkthrough-init` until this is clean.
+Do not proceed to `/init` until this is clean.
 
 ## Notes
 

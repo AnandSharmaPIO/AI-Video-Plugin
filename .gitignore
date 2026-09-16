@@ -4,7 +4,7 @@ node_modules/
 # TTS virtualenv. Default location is platform/tts/venv; point
 # WALKTHROUGH_TTS_VENV at a user-level cache so a plugin update cannot
 # destroy a multi-GB, 15-20 minute rebuild.
-platform/tts/venv/
+**/platform/tts/venv/
 __pycache__/
 *.pyc
 

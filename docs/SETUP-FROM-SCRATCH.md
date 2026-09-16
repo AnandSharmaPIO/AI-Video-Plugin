@@ -2,6 +2,8 @@
 
 > **Archived reference.** Describes the framework as a standalone repo, before
 > it became a plugin (`platform/` inside the project, `npm run …` scripts).
+> The engine itself now lives at `plugins/video/` in this repo (this guide's
+> bare `platform/...`, `npm install`, etc. mean "from inside `plugins/video/`").
 > For current instructions see the plugin README, `/setup` and
 > `/init`.
 
@@ -13,8 +15,9 @@ Use this guide when **both** are true:
 Follow the parts in order. Part 1 sets up the machine. Part 2 onboards the app.
 Part 3 makes your first video.
 
-> If the machine is already set up, or the app already has a `walkthroughs/<app>/`
-> folder, use `docs/SETUP.md` instead — it covers those shorter paths.
+> If the machine is already set up, or the app already has a `<app>/`
+> folder at the repo root, use `docs/SETUP.md` instead — it covers those
+> shorter paths.
 
 ---
 
@@ -104,11 +107,12 @@ In Claude Code, run:
 /walkthrough-discover
 ```
 
-This builds the catalog for the app under `walkthroughs/<your-app>/`:
+This builds the catalog for the app at `<your-app>/` (a folder directly at
+the repo root):
 
 - `project.yaml` — the app's settings (address, login, video options, and — if
   it has more than one — named **environments** such as `live` and `local`).
-- `knowledge/` — the app map, user journeys, and proven locators.
+- `project-overview/` — the app map, user journeys, and proven locators.
 - `modules/<m>/features/<f>/feature.yaml` — draft plans for each video (it also
   drafts each control's click and any full-app **journey**).
 
@@ -123,7 +127,7 @@ Discovery creates a `.env.example`. Copy it and add the real credentials. The
 `.env` file is **never committed** — passwords stay only on your machine.
 
 ```bash
-cp walkthroughs/<your-app>/.env.example walkthroughs/<your-app>/.env
+cp <your-app>/.env.example <your-app>/.env
 # open .env and type the real email + password
 ```
 
@@ -138,7 +142,7 @@ in the ones you'll record against.
 On locked-down work machines, security software often blocks the bundled
 Chromium from running (you'll see `spawn EPERM` / `Permission denied` when
 recording). If so, tell the tool to use the Chrome or Edge you already have.
-Add this to `walkthroughs/<your-app>/project.yaml`:
+Add this to `<your-app>/project.yaml`:
 
 ```yaml
 video:
@@ -156,7 +160,7 @@ generates the voiceover, muxes them, and verifies the result — output is **Ful
 HD (1920×1080) at 30 fps**:
 
 ```bash
-npm run produce -- walkthroughs/<your-app>/modules/<module>/features/<feature>
+npm run produce -- <your-app>/modules/<module>/features/<feature>
 ```
 
 Add `--headed` to watch the browser as it records.
@@ -169,7 +173,7 @@ you opt in.
 When it finishes, the video is here:
 
 ```
-walkthroughs/<your-app>/modules/<module>/features/<feature>/generated/walkthrough-narrated.mp4
+<your-app>/modules/<module>/features/<feature>/generated/final-video.mp4
 ```
 
 **Recording live vs local.** If discovery set up environments, choose one with
@@ -184,13 +188,13 @@ npm run produce -- <feature> --env local     # local copy — the tool starts fr
 end-to-end walkthrough (no re-recording):
 
 ```bash
-npm run journey -- walkthroughs/<your-app>/journeys/<id>
+npm run journey -- <your-app>/journeys/<id>
 ```
 
 Videos are not stored in git (they can be rebuilt anytime). To keep a copy:
 
 ```bash
-npm run publish -- walkthroughs/<your-app>/modules/<module>/features/<feature> --dest <your-folder>
+npm run publish -- <your-app>/modules/<module>/features/<feature> --dest <your-folder>
 ```
 
 To see every planned video and its status:

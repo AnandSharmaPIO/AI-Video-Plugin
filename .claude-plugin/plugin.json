@@ -1,5 +1,5 @@
 {
-  "name": "walkthrough-video-creator",
+  "name": "video",
   "description": "Generate narrated, UI-focused walkthrough videos (product demos, training, onboarding) of any web app via Playwright + local TTS. Voice-first pipeline with frame-anchored audio sync, schema-validated feature specs, and mechanical media verification.",
   "version": "0.1.0",
   "author": {

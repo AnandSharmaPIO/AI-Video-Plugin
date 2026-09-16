@@ -29,7 +29,7 @@ add('Node.js', nodeMajor >= 18, `v${process.versions.node}`,
 // Engine dependencies live in the PLUGIN, not the user's project.
 add('npm dependencies', fs.existsSync(path.join(pluginRoot, 'node_modules', '@playwright')),
   fs.existsSync(path.join(pluginRoot, 'node_modules')) ? 'node_modules present' : 'node_modules missing',
-  'Run: /walkthrough-setup  (npm install --prefix <plugin>)');
+  'Run: /setup  (npm install --prefix <plugin>)');
 
 // ── Playwright browsers (chromium) + Chrome channel if any project needs it ──
 const homeDir = process.env.HOME || process.env.USERPROFILE || '.';

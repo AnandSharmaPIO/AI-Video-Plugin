@@ -2,8 +2,8 @@
 
 > **Archived reference.** Describes the framework as a standalone repo, before
 > it became a plugin (`platform/` inside the project, `npm run …` scripts).
-> For current instructions see the plugin README, `/walkthrough-setup` and
-> `/walkthrough-init`.
+> For current instructions see the plugin README, `/setup` and
+> `/init`.
 
 Use this guide when **both** are true:
 

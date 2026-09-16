@@ -24,4 +24,4 @@ timeout.
 Every failing check prints its own fix. Relay the failures and the fixes; do not
 attempt to produce a video until `doctor` is clean.
 
-If the TTS venv is missing entirely, run `/walkthrough-setup` first.
+If the TTS venv is missing entirely, run `/setup` first.

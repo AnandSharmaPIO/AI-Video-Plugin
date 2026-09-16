@@ -1,5 +1,5 @@
 {
-  "name": "video-marketplace",
+  "name": "video-plugin",
   "description": "Marketplace for the video plugin — narrated UI walkthrough videos via Playwright and local TTS.",
   "owner": {
     "name": "Programmers.ai",

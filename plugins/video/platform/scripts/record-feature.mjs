@@ -69,6 +69,38 @@ function diagnoseBrowserLaunch(fromDir) {
   }
 }
 
+/**
+ * The generated spec lives in the user's project (never an ancestor of the
+ * plugin), and it needs Node's real ESM resolver — Playwright only picks
+ * `import()` over `require()` for a test file when Node's own module-type
+ * lookup (nearest package.json "type") says "module" (@playwright/test's
+ * requireOrImport / fileIsModule). Without that, the spec loads as CommonJS,
+ * and `@engine/cursor` -> `./env.mjs` (a real ESM-only file) hard-fails —
+ * Node refuses to `require()` a .mjs file no matter what any loader hook does.
+ *
+ * Fix: drop two tiny, gitignored, machine-generated files next to the spec —
+ * a `package.json` (`{"type":"module"}`) so Node's lookup finds "module" right
+ * there, and a `node_modules` link to the plugin's own install so the spec's
+ * `import '@playwright/test'` resolves under real (NODE_PATH-blind) ESM
+ * resolution. Both are pure build plumbing: nothing here is authored content,
+ * nothing needs to be committed, and the feature folder holds nothing else
+ * that would collide with these names.
+ */
+function ensureEsmResolution(featureDir) {
+  const pkgPath = path.join(featureDir, 'package.json');
+  if (!fs.existsSync(pkgPath)) fs.writeFileSync(pkgPath, JSON.stringify({ private: true, type: 'module' }, null, 2) + String.fromCharCode(10));
+
+  const nmPath = path.join(featureDir, 'node_modules');
+  if (!fs.existsSync(nmPath)) {
+    const target = path.join(pluginRoot, 'node_modules');
+    try {
+      fs.symlinkSync(target, nmPath, process.platform === 'win32' ? 'junction' : 'dir');
+    } catch (err) {
+      if (err.code !== 'EEXIST') throw err;
+    }
+  }
+}
+
 if (positional.length !== 1) {
   console.error('usage: record-feature <feature-path> [--headed] [--allow-mutations] [--allow-edited-spec]');
   process.exit(2);
@@ -160,6 +192,8 @@ const pwArgs = [
 if (flags.has('--headed')) pwArgs.push('--headed');
 
 if (wtEnv) console.log(`  environment: ${wtEnv} (playwright.config picks its baseUrl${'' } + auto-starts its servers)`);
+
+ensureEsmResolution(featureDir);
 
 const result = spawnSync(process.execPath, pwArgs, {
   cwd: repoRoot,

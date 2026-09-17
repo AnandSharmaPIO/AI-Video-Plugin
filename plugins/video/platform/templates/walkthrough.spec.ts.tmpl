@@ -1,6 +1,4 @@
 import { test, expect, type Page } from '@playwright/test';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { installCursor, resetCursor, glideTo, moveAndClick } from '@engine/cursor';
 import {
   beat,
@@ -37,7 +35,7 @@ import {
  *  to generated/frames/ — free training-doc screenshots from the same run.
  */
 
-const FEATURE_DIR = path.dirname(fileURLToPath(import.meta.url));
+const FEATURE_DIR = process.env.WT_FEATURE_DIR!;
 
 /* Credentials come from .env files (feature → project → repo root) — never
  * hardcode secrets here. Delete if the feature needs no auth. */

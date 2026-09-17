@@ -265,8 +265,6 @@ function renderSpec() {
   const testTimeoutMs = Math.max(5 * 60 * 1000, shots.length * 15000 + 60000);
 
   return `import { test, expect } from '@playwright/test';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { ${cursorImports} } from '@engine/cursor';
 import {
   beat,
@@ -286,7 +284,7 @@ import {
  * feature-content-hash: ${featureContentHash(feature)}
  */
 
-const FEATURE_DIR = path.dirname(fileURLToPath(import.meta.url));
+const FEATURE_DIR = process.env.WT_FEATURE_DIR!;
 
 loadEnvChain(FEATURE_DIR);
 ${credentials}${constants ? '\n/* Non-secret demo constants (feature.yaml → constants) */\n' + constants + '\n' : ''}

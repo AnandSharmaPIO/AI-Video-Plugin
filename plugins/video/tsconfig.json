@@ -9,8 +9,14 @@
     "strict": false,
     "baseUrl": ".",
     "paths": {
-      "@engine/*": ["platform/engine/*"]
+      "@engine/*": [
+        "platform/engine/*"
+      ]
     }
   },
-  "exclude": ["node_modules", "**/generated/**", "platform/tts/venv"]
+  "exclude": [
+    "node_modules",
+    "**/generated/**",
+    "platform/tts/venv"
+  ]
 }
